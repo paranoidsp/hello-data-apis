@@ -1,5 +1,4 @@
-# Some metadata about the project
-name: base
-description: Blank template for a Hasura project
-keywords: base, getting-started
-platformVersion: "v0.15.3"
+description: A basic hasura project with some sample data
+keywords: hello-world,getting-started
+name: hello-world
+platformVersion: v0.15.3
