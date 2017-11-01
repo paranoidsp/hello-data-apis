@@ -1,4 +1,4 @@
-description: A basic hasura project with some sample data
-keywords: hello-world,getting-started
-name: hello-world
+description: A sample hasura project for exploring the Data APIs
+keywords: hello-data-apis,getting-started
+name: hello-data-apis
 platformVersion: v0.15.3
