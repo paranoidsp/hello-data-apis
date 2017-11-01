@@ -1,36 +1,39 @@
 # Hasura Hello World
 > Get started with a free Hasura Project
 
-## Installation
+This quickstart consists of a basic hasura project with a simple nodejs express app running on it. Once this project is deployed on to a hasura cluster, you will have the nodejs app will run at https://app.cluster-name.hasura-app.io
 
-OS X, Linux
+## Sections
 
-```
-$ curl https://storage.googleapis.com/hasuractl/install-dev.sh | bash
-```
+* [Introduction](#introduction)
+* [Quickstart](#quickstart)
+* [Data API](#data-apis)
+* [Auth API](#auth-apis)
+* [Filestore API](#filestore-apis)
+* [FAQ](#faq)
+## Introduction
 
-Windows
-
-```
-https://storage.googleapis.com/hasuractl/dev/windows-amd64/hasura.exe
-```
+This quickstart project comes with the following by default:
+1. A basic hasura project
+2. Two tables `article` and `author` with some dummy data
+3. A basic react app which runs at the `ui` subdomain which fetches a list of articles available
+4. A basic nodejs-express app which runs on the `api` subdomain.
 
 ## Quickstart
 
-#### Getting a free project
+Follow this section to get this project working. Before you begin, ensure you have the latest version of hasura cli tool installed.
 
-Once you have **hasura** installed,
+### Step 1: Getting the project
 
-```
-$ hasura login
-```
-
-Authenticating is required to allow hasura to setup the free trial.
-
-```
-$ hasura quickstart hasura/hello-world
+```sh
+$ hasura quickstart hello-world
 $ cd hello-world
 ```
+
+The above command does the following:
+1. Creates a new folder in the current working directory called `hello-world`
+2. Creates a new trial hasura cluster for you and sets that cluster as the default cluster for this project
+3. Initializes `hello-world` as a git repository and adds the necessary git remotes.
 
 #### Getting cluster status
 
@@ -39,6 +42,18 @@ After the free cluster is installed, get brief information about the cluster via
 ```
 $ hasura cluster status
 ```
+This will give you your cluster status like so
+
+```sh
+INFO Status:
+Cluster Name:       h34-excise98-stg
+Cluster Alias:      hasura
+Kube Context:       h34-excise98-stg
+Platform Version:   v0.15.3
+Cluster State:      Synced
+```
+
+Keep a note of your cluster name. Alternatively, you can also go to your [hasura dashboard](https://dashboard.hasura.io) and see the clusters you have.
 
 #### Deploying on a hasura cluster
 
@@ -66,12 +81,12 @@ This will open up Console UI on the browser. You can access it at [http://localh
 
 Using the **api-console**, you can explore different Hasura APIs.
 
-You will land up on the API Explorer where you can try out APIs (Data, Auth, Filestore and Notify) using the API Collections.
+The API console will open the API Explorer tab, where you can try out APIs (Data, Auth, Filestore and Notify) using the API Collections on the left.
 
 ### Data APIs
 
 
-The Hasura Data API provides a HTTP/JSON API backed by a PostgreSQL database.
+The Hasura Data API provides a ready-to-use HTTP/JSON API backed by a PostgreSQL database.
 
 These APIs are designed to be used by any client capable of making HTTP requests, especially
 and are carefully optimized for performance.
@@ -81,20 +96,35 @@ The Data API provides the following features:
 * Rich query syntax that supports complex queries using relationships.
 * Role based access control to handle permissions at a row and column level.
 
-The following examples use a sample schema for a blog application that consists of two tables, article and author. To run the following examples, install hasura, login and run
+ The url to be used to make these queries is always of the type: `https://data.cluster-name.hasura-app.io/v1/query` (in this case `https://data.h34-excise98-stg.hasura-app.io`)
+
+As mentioned earlier, this quickstart app comes with two pre-created tables `author` and `article`.
+
 ```
-$ hasura quickstart hello-world
-$ cd hello-world
-$ git add .
-$ git commit -am "Initial Commit" && git push hasura master
-$ hasura api-console
+**author**
+
+column | type
+--- | ---
+id | integer NOT NULL *primary key*
+name | text NOT NULL
+
+**article**
+
+column | type
+--- | ---
+id | serial NOT NULL *primary key*
+title | text NOT NULL
+content | text NOT NULL
+rating | numeric NOT NULL
+author_id | integer NOT NULL
 ```
-This will open the Hasura api-console, with the sample schema discussed above already loaded.
+
+Alternatively, you can also view the schema for these tables on the api console by heading over to the tab named `data`.
+
 You can just paste the queries shown below into the json textbox in the API explorer and hit send to test them out.
 (The following is a short set of examples to show the power of the Hasura Data APIs, check out our [documentation](https://docs.hasura.io/) for more when you're done here!)
 
 Let's look at some sample queries to explore the Data APIs:
-
 
 #### CRUD
 Simple CRUD Operations are supported via an intuitive JSON query language.
@@ -366,11 +396,17 @@ Bring up the API console using
 $ hasura api-console
 ```
 And then navigate to the [ Learning center ](http://localhost:8080/learning-center) tab.
+### Auth APIs
 
+Every app almost always requires some form of authentication. This is useful to identify a user and provide some sort of personalised experience to the user. Hasura provides various types of authentication (username/password, mobile/otp, email/password, Google, Facebook etc).
+
+You can try out these in the `API EXPLORER` tab of the `api console`. To learn more, check out our [docs](https://docs.hasura-stg.hasura-app.io/0.15/manual/users/index.html)
 
 ### File APIs
 
-The File API on Hasura lets you upload and store files, and download them when required. This is done via simple POST, GET and DELETE requests on a single endpoint.
+Sometimes, you would want to upload some files to the cloud. This can range from a profile pic for your user or images for things listed on your app. You can securely add, remove, manage, update files such as pictures, videos, documents using the Hasura filestore.
+
+This is done via simple POST, GET and DELETE requests on a single endpoint.
 
 Just like the Data service, the File API supports Role based access control to the files, along with custom authorization hooks. (Check out our [ documentation ](https://docs.hasura.io/) for more!)
 
@@ -407,21 +443,9 @@ By default, the File API provides three hooks to choose from
 You can also set up your own authorization webhook!
 (Check out our [ documentation ](https://docs.hasura.io/) for more!)
 
-### Explore the Auth and Notify APIs
+### Notify APIs
 
-Check out the [ Learning center ](http://localhost:8080/learning-center) tab on the API Console for short tutorials on the Auth and Notify APIs!
-
-### Node.js Express Hello World App
-
-This quickstart project has a simple Node.js Express Hello World app.
-
-You can access the app source code inside
-
-```
-$ cd services/app/src
-```
-
-The URL for accessing the app is [https://app.your-cluster-name.hasura-app.io](https://app.<your-cluster-name>.hasura-app.io)
+Check out the [ Learning center ](http://localhost:8080/learning-center) tab on the API Console for short tutorials on all the APIs!
 
 ## Add your own custom microservice
 
@@ -516,5 +540,5 @@ Info about the clusters added to this project can be found in this file. Each cl
   config:
     configmap: controller-conf
     namespace: hasura
-  data: null  
+  data: null
 ```
